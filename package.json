@@ -13,10 +13,15 @@
     "@types/node": "18.13.0",
     "@types/react": "18.0.27",
     "@types/react-dom": "18.0.10",
+    "firebase": "^9.17.1",
     "next": "13.1.6",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+<<<<<<< HEAD
     "tailwindcss": "^3.2.6",
+=======
+    "react-firebase-hooks": "^5.1.1",
+>>>>>>> 20852c5981c4a0a19d53ab32508c70c30b0c912a
     "typescript": "4.9.5"
   }
 }
