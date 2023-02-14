@@ -6,3 +6,7 @@ export default function Enter({}) {
 		</div>
 	);
 }
+
+function SignInButton() {}
+function SignOutButton() {}
+function UsernameForm() {}

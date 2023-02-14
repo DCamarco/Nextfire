@@ -1,9 +1,11 @@
 import React from "react";
 
-type Props = {};
-
-const Loader = (props: Props) => {
-	return <div>Loader</div>;
+type Props = {
+	show: boolean;
 };
 
-export default Loader;
+//Loading Spinner
+export default function Loader(props: Props) {
+	const { show } = props;
+	return show ? <div className='loader'></div> : null;
+}

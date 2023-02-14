@@ -1,21 +1,25 @@
 import Head from "next/head";
-import Image from "next/image";
 import Link from "next/link";
 import styles from "@/styles/Home.module.css";
+import Loader from "@/components/Loader";
+
+import toast, { Toaster } from "react-hot-toast";
 
 type Props = {};
 const Home = ({}: Props): JSX.Element => {
 	return (
 		<div>
-			<Link
-				prefetch={false}
-				href={{
-					pathname: "/[username]",
-					query: {
-						username: "jeffd23",
-					},
+			<Loader show />
+			<h1>Sign Up</h1>
+			<button
+				onClick={() => {
+					toast.success("hello toast!");
+					console.log("Toasted");
 				}}
-			></Link>
+			>
+				Toast Me!
+			</button>
+			<Toaster />
 		</div>
 	);
 };
