@@ -1,10 +1,10 @@
 //New next JS typescript page
 import { useState, useContext, useCallback } from "react";
 
-import { auth, googleAuthProvider } from "../lib/firebase";
+import { auth, firestore, googleAuthProvider } from "../lib/firebase";
 import { UserContext } from "@/lib/context";
 
-import debounce from "../node_modules/lodash.debounce";
+import debounce from "lodash.debounce";
 import { signInWithPopup } from "firebase/auth";
 export default function Enter({}) {
 	const { user, username } = useContext(UserContext);
@@ -41,12 +41,37 @@ function SignOutButton() {
 	return <button onClick={() => auth.signOut()}>Sign Out</button>;
 }
 
-function UsernameForm() {
+function UsernameForm(): JSX.Element {
 	const [formValue, setFormValue] = useState("");
 	const [isValid, setIsValid] = useState(false);
 	const [loading, setLoading] = useState(false);
 
 	const { user, username } = useContext(UserContext);
+
+	const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		const user = auth.currentUser;
+		try {
+			if (user) {
+				const userDoc = firestore.doc(`users/${user.uid}`);
+				const usernameDoc = firestore.doc(`usernames/${formValue}`);
+
+				const batch = firestore.batch();
+				batch.set(userDoc, {
+					username: formValue,
+					photoURL: user.photoURL,
+					displayName: user.displayName,
+				});
+				batch.set(usernameDoc, { uid: user.uid });
+
+				await batch.commit();
+			} else {
+				console.log("User not signed in");
+			}
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
 	const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const val = e.target.value.toLowerCase();
@@ -78,31 +103,6 @@ function UsernameForm() {
 		[]
 	);
 
-	const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-		e.preventDefault();
-		const user = auth.currentUser;
-		try {
-			if (user) {
-				const userDoc = firestore.doc(`users/${user.uid}`);
-				const usernameDoc = firestore.doc(`usernames/${formValue}`);
-
-				const batch = firestore.batch();
-				batch.set(userDoc, {
-					username: formValue,
-					photoURL: user.photoURL,
-					displayName: user.displayName,
-				});
-				batch.set(usernameDoc, { uid: user.uid });
-
-				await batch.commit();
-			} else {
-				console.log("User not signed in");
-			}
-		} catch (error) {
-			console.log(error);
-		}
-	};
-
 	return (
 		!username && (
 			<section>
@@ -113,6 +113,11 @@ function UsernameForm() {
 						placeholder='username'
 						value={formValue}
 						onChange={onChange}
+					/>
+					<UsernameMessage
+						username={formValue}
+						isValid={isValid}
+						loading={loading}
 					/>
 					<button type='submit' className='btn-green' disabled={!isValid}>
 						Choose
